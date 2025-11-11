@@ -1,0 +1,17 @@
+{{- if and .Values.postgres.enabled .Values.postgres.persistence.enabled }}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ include "bettafish.fullname" . }}-postgres-pv
+  labels:
+    {{- include "bettafish.labels" . | nindent 4 }}
+spec:
+  capacity:
+    storage: {{ .Values.postgres.persistence.size }}
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /data/postgres
+{{- end }}
+
+

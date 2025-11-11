@@ -1,0 +1,83 @@
+bettafish:
+  image:
+    repository: junzhutx/bettafish
+    tag: latest
+    pullPolicy: IfNotPresent
+
+  replicaCount: 1
+
+  service:
+    type: ClusterIP
+    ports:
+      api: 5000
+      insight: 8501
+      media: 8502
+      query: 8503
+
+  env:
+    PYTHONUNBUFFERED: "1"
+    STREAMLIT_SERVER_ENABLE_FILE_WATCHER: "false"
+
+  envFromSecret: ""
+  envFromConfigMap: ""
+
+  readinessProbe:
+    path: /
+    port: api
+    initialDelaySeconds: 20
+    periodSeconds: 10
+
+  persistence:
+    enabled: true
+    size: 5Gi
+    volumes:
+      - name: logs
+        mountPath: /app/logs
+        size: 1Gi
+      - name: final-reports
+        mountPath: /app/final_reports
+        size: 1Gi
+      - name: insight-reports
+        mountPath: /app/insight_engine_streamlit_reports
+        size: 1Gi
+      - name: media-reports
+        mountPath: /app/media_engine_streamlit_reports
+        size: 1Gi
+      - name: query-reports
+        mountPath: /app/query_engine_streamlit_reports
+        size: 1Gi
+    storageClassName: ""
+
+postgres:
+  enabled: true
+  image:
+    repository: postgres
+    tag: "15"
+    pullPolicy: IfNotPresent
+
+  auth:
+    username: bettafish
+    password: bettafish
+    database: bettafish
+
+  persistence:
+    enabled: true
+    size: 10Gi
+    storageClassName: ""
+
+  service:
+    port: 5432
+
+  resources: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+global:
+  nameOverride: ""
+  fullnameOverride: ""
+
+ingress:
+  enabled: true
+  hostname: bettafish.lan
+  ingressClassName: nginx

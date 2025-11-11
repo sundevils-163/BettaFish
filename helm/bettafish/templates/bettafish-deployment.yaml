@@ -1,0 +1,73 @@
+{{- $fullName := include "bettafish.fullname" . -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ printf "%s-web" $fullName }}
+  labels:
+    {{- include "bettafish.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.bettafish.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "bettafish.name" . }}
+      app.kubernetes.io/component: web
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "bettafish.name" . }}
+        app.kubernetes.io/component: web
+        {{- include "bettafish.labels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: bettafish
+          image: "{{ .Values.bettafish.image.repository }}:{{ .Values.bettafish.image.tag }}"
+          imagePullPolicy: {{ .Values.bettafish.image.pullPolicy }}
+          ports:
+            - name: api
+              containerPort: {{ .Values.bettafish.service.ports.api }}
+            - name: insight
+              containerPort: {{ .Values.bettafish.service.ports.insight }}
+            - name: media
+              containerPort: {{ .Values.bettafish.service.ports.media }}
+            - name: query
+              containerPort: {{ .Values.bettafish.service.ports.query }}
+          env:
+            {{- range $key, $value := .Values.bettafish.env }}
+            - name: {{ $key }}
+              value: "{{ $value }}"
+            {{- end }}
+          {{- if or .Values.bettafish.envFromConfigMap .Values.bettafish.envFromSecret }}
+          envFrom:
+            {{- if .Values.bettafish.envFromConfigMap }}
+            - configMapRef:
+                name: {{ .Values.bettafish.envFromConfigMap }}
+            {{- end }}
+            {{- if .Values.bettafish.envFromSecret }}
+            - secretRef:
+                name: {{ .Values.bettafish.envFromSecret }}
+            {{- end }}
+          {{- end }}
+          volumeMounts:
+            {{- if and .Values.bettafish.persistence.enabled .Values.bettafish.persistence.volumes }}
+            {{- range .Values.bettafish.persistence.volumes }}
+            - name: {{ .name }}
+              mountPath: {{ .mountPath }}
+            {{- end }}
+            {{- end }}
+          readinessProbe:
+            httpGet:
+              path: {{ default "/" .Values.bettafish.readinessProbe.path }}
+              port: {{ .Values.bettafish.readinessProbe.port }}
+            initialDelaySeconds: {{ .Values.bettafish.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.bettafish.readinessProbe.periodSeconds }}
+      volumes:
+        {{- if and .Values.bettafish.persistence.enabled .Values.bettafish.persistence.volumes }}
+        {{- range .Values.bettafish.persistence.volumes }}
+        - name: {{ .name }}
+          persistentVolumeClaim:
+            claimName: {{ printf "%s-%s" $fullName .name }}
+        {{- end }}
+        {{- end }}
+      nodeSelector:
+        kubernetes.io/hostname: k8sworker1
+

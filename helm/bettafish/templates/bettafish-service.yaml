@@ -1,0 +1,27 @@
+{{- $fullName := include "bettafish.fullname" . -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ printf "%s-web" $fullName }}
+  labels:
+    {{- include "bettafish.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.bettafish.service.type }}
+  selector:
+    app.kubernetes.io/name: {{ include "bettafish.name" . }}
+    app.kubernetes.io/component: web
+  ports:
+    - name: api
+      port: {{ .Values.bettafish.service.ports.api }}
+      targetPort: api
+    - name: insight
+      port: {{ .Values.bettafish.service.ports.insight }}
+      targetPort: insight
+    - name: media
+      port: {{ .Values.bettafish.service.ports.media }}
+      targetPort: media
+    - name: query
+      port: {{ .Values.bettafish.service.ports.query }}
+      targetPort: query
+
+

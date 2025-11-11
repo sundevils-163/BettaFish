@@ -1,0 +1,20 @@
+{{- if and .Values.bettafish.persistence.enabled .Values.bettafish.persistence.volumes }}
+{{- $fullName := include "bettafish.fullname" . -}}
+{{- range .Values.bettafish.persistence.volumes }}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ printf "%s-%s" $fullName .name }}
+  labels:
+    {{- include "bettafish.labels" $ | nindent 4 }}
+spec:
+  capacity:
+    storage: {{ .size }}
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: {{ printf "/data/bettafish/%s" .name }}
+---
+{{- end }}
+{{- end }}
+

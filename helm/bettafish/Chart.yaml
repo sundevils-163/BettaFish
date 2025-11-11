@@ -1,0 +1,8 @@
+apiVersion: v2
+name: bettafish
+description: Multi-agent BettaFish stack with bundled PostgreSQL
+type: application
+version: 0.1.0
+appVersion: "latest"
+
+

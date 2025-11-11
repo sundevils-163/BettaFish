@@ -1,0 +1,24 @@
+{{- if and .Values.bettafish.persistence.enabled .Values.bettafish.persistence.volumes }}
+{{- $fullName := include "bettafish.fullname" . -}}
+{{- range .Values.bettafish.persistence.volumes }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ printf "%s-%s" $fullName .name }}
+  labels:
+    {{- include "bettafish.labels" $ | nindent 4 }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  {{- if $.Values.bettafish.persistence.storageClassName }}
+  storageClassName: {{ $.Values.bettafish.persistence.storageClassName }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .size }}
+  volumeName: {{ printf "%s-%s" $fullName .name }}
+---
+{{- end }}
+{{- end }}
+
+

@@ -38,13 +38,11 @@ spec:
             {{- end }}
           {{- if or .Values.bettafish.envFromConfigMap .Values.bettafish.envFromSecret }}
           envFrom:
-            {{- if .Values.bettafish.envFromConfigMap }}
-            - configMapRef:
-                name: {{ .Values.bettafish.envFromConfigMap }}
-            {{- end }}
-            {{- if .Values.bettafish.envFromSecret }}
+            {{- if and .Values.bettafish.envFromSecret (gt (len .Values.bettafish.envFromSecret) 0) }}
+            {{- range .Values.bettafish.envFromSecret }}
             - secretRef:
-                name: {{ .Values.bettafish.envFromSecret }}
+                name: {{ .name }}
+            {{- end}}
             {{- end }}
           {{- end }}
           volumeMounts:

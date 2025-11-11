@@ -17,9 +17,14 @@ bettafish:
   env:
     PYTHONUNBUFFERED: "1"
     STREAMLIT_SERVER_ENABLE_FILE_WATCHER: "false"
+    DB_HOST: bettafish-postgres
+    DB_PORT: 5432
+    DB_DIALECT: postgresql
+    DB_NAME: bettafish
 
-  envFromSecret: ""
-  envFromConfigMap: ""
+  envFromSecret:
+    - name: "bettafish-secrets"
+    - name: "bettafish-postgres-auth"
 
   readinessProbe:
     path: /

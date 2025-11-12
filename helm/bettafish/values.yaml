@@ -21,6 +21,27 @@ bettafish:
     DB_PORT: 5432
     DB_DIALECT: postgresql
     DB_NAME: bettafish
+    # Insight Agent LLM接口BaseUrl，可自定义厂商API
+    INSIGHT_ENGINE_BASE_URL: https://api.openai.com/v1/chat/completions
+    INSIGHT_ENGINE_MODEL_NAME: gpt-3.5-turbo
+    # Media Agent LLM接口BaseUrl
+    MEDIA_ENGINE_BASE_URL: https://api.openai.com/v1/chat/completions
+    MEDIA_ENGINE_MODEL_NAME: gpt-3.5-turbo
+    # MindSpider LLM接口BaseUrl
+    MINDSPIDER_BASE_URL: https://api.openai.com/v1/chat/completions
+    MINDSPIDER_MODEL_NAME: gpt-3.5-turbo
+    # Query Agent LLM接口BaseUrl
+    QUERY_ENGINE_BASE_URL: https://api.openai.com/v1/chat/completions
+    QUERY_ENGINE_MODEL_NAME: gpt-3.5-turbo
+    # Report Agent LLM接口BaseUrl
+    REPORT_ENGINE_BASE_URL: https://api.openai.com/v1/chat/completions
+    REPORT_ENGINE_MODEL_NAME: gpt-3.5-turbo
+    # Forum Host LLM BaseUrl
+    FORUM_HOST_BASE_URL: https://api.openai.com/v1/chat/completions
+    FORUM_HOST_MODEL_NAME: gpt-3.5-turbo
+    # SQL Keyword Optimizer BaseUrl
+    KEYWORD_OPTIMIZER_BASE_URL: https://api.openai.com/v1/chat/completions
+    KEYWORD_OPTIMIZER_MODEL_NAME: gpt-3.5-turbo
 
   envFromSecret:
     - name: "bettafish-secrets"
